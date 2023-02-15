@@ -27,6 +27,8 @@ Opccion 2: Seleccione los joints a los que desea cambiarles el color, seccione e
 
 [![rig3.gif](https://i.postimg.cc/htmYcM94/rig3.gif)](https://postimg.cc/LJHDVtCG)
 
+### Personalizar controladores
+
 Personalice una curva, seleccione el primer hueso, seleccione la curva personalizada, de click en "Rig".
 
 [![rig4.gif](https://i.postimg.cc/fbhrLXKc/rig4.gif)](https://postimg.cc/cvXmkvPC)
