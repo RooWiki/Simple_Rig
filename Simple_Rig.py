@@ -6,7 +6,7 @@ from functools import partial
 window_name = "rig_tool"
 window_title = "Simple Rig by RooWiki"
 window_w = 220
-window_h = 220
+window_h = 300
 
 def create_window():
     if cmds.window(window_name, query=True, exists=True):
@@ -18,7 +18,7 @@ def create_window():
     create_customUI()
     
     cmds.showWindow(window_name)
-    
+
 def create_customUI():
     cmds.button("rig_button", label="Rig", w=window_w, h=40, command=rigg)
     
@@ -43,12 +43,31 @@ def color_control(*args):
     selection = cmds.ls(selection=True)
     
     for control in selection:
-        shape = cmds.listRelatives(control, children=True, shapes=True)
-        if shape:
-            for s in shape:
-                cmds.setAttr(s + ".overrideEnabled", 1)
-                cmds.setAttr(s + ".overrideRGBColors", 1)
-                cmds.setAttr(s + ".overrideColorRGB", *rgb)
+        if cmds.objectType(control) == "joint":
+            cmds.setAttr(control + ".overrideEnabled", 1)
+            cmds.setAttr(control + ".overrideRGBColors", 1)
+            cmds.setAttr(control + ".overrideColorRGB", *rgb)
+        else:
+            shape = cmds.listRelatives(control, children=True, shapes=True)
+            if shape:
+                for s in shape:
+                    cmds.setAttr(s + ".overrideEnabled", 1)
+                    cmds.setAttr(s + ".overrideRGBColors", 1)
+                    cmds.setAttr(s + ".overrideColorRGB", *rgb)
+
+def set_line_thickness(*args):
+    thickness = cmds.intSliderGrp("line_thickness_slider", query=True, value=True)
+    selection = cmds.ls(selection=True)
+    
+    for control in selection:
+        if cmds.objectType(control) == "joint":
+            cmds.setAttr(control + ".lineWidth", thickness)
+        else:
+            shapes = cmds.listRelatives(control, children=True, shapes=True)
+            if shapes:
+                for shape in shapes:
+                    if cmds.objectType(shape) == "nurbsCurve":
+                        cmds.setAttr(shape + ".lineWidth", thickness)
 
 def scale_control(mode, *args):
     scale_factor = cmds.floatField("scale_floatField", query=True, value=True)
@@ -59,17 +78,6 @@ def scale_control(mode, *args):
             cmds.scale(1.0 - scale_factor, 1.0 - scale_factor, 1.0 - scale_factor, control + ".cv[0:]")
         else:
             cmds.scale(1.0 + scale_factor, 1.0 + scale_factor, 1.0 + scale_factor, control + ".cv[0:]")
-
-def set_line_thickness(*args):
-    thickness = cmds.intSliderGrp("line_thickness_slider", query=True, value=True)
-    selection = cmds.ls(selection=True)
-    
-    for control in selection:
-        shapes = cmds.listRelatives(control, children=True, shapes=True)
-        if shapes:
-            for shape in shapes:
-                if cmds.objectType(shape) == "nurbsCurve":
-                    cmds.setAttr(shape + ".lineWidth", thickness)
 
 def rigg(*args):
     selection = cmds.ls(selection=True)
